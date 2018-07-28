@@ -1,0 +1,77 @@
+published secret == internet itself!
+
+how can it be sth. consolation: "comfort received by a person after a loss or disappointment."
+
+-
+
+scroll-link
+
+-
+
+1) infinite scroll with paper.js or p5.js or sth. else.js
+
+2) link it with socket.io
+
+3) 2 scroll stripe
+
+4) many scrool stripe
+
+5) select mode. - focus 1 stripe or overview stripes
+
+-
+
+scroll event intermediate server..
+
+will be a node.js server..
+
+vue.js? or simply.. p5/paper.js..
+
+tween.js.. might help?
+
+realtime capability?
+
+what is the fastest/best way?
+
+-
+
+well. anyway we will simply decide to use socket.io. capability measurement should be done. but afterward. as a reference.
+
+-
+
+p5/paper.js.. what will be faster?
+
+well.. what about.. sth. else. like two.js / three.js
+
+..
+
+what is the fastest? frontend js.
+
+well.. also.. there's many out there. but we want sth. that can do seriously nice visual works.
+
+maybe WEBGL help?
+
+p5 support WEBGL.
+
+but..well..
+
+three.js was super fast.. for 3D stuff..
+
+but.. than.. what about two.js?
+
+or paper.js is slow then?
+
+--
+
+what is most closest to 'canvas' ?
+
+--
+
+https://stackoverflow.com/a/12764907
+
+well. it says.. first do with canvas2d and then upgrade it if needed.. but don't start with webgl.
+
+--
+
+so p5 is good.
+
+p5 can do both. so if i need any i can easily transfer.
