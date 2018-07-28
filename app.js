@@ -67,7 +67,9 @@ var udp_sc = new osc.UDPPort({
   localAddress: '0.0.0.0', //NOTE: '127.0.0.1' doesn't work!!
   localPort: 57121,
   // remoteAddress: '192.168.1.129',
-  remoteAddress: '192.168.1.123',
+  // remoteAddress: '192.168.1.123',
+  //remoteAddress: '10.10.10.71',
+  remoteAddress: '0.0.0.0',
   remotePort: 57120,
   metadata: true
 });
@@ -94,10 +96,10 @@ udp_sc.on("ready", function() {
         address: "/odom",
         args: [{
           type: "i",
-          value: msg.odom_integral
+          value: msg.odom_target
         }, {
           type: "i",
-          value: msg.odom_momentary
+          value: msg.odom_full
         }]
       });
     });

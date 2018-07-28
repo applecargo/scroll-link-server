@@ -1,43 +1,54 @@
 window.onload = function() {
 
-  //paperjs @ canvas (id: 'paperjs')
+  //graphics - paperjs
 
   paper.install(window);
-  paper.setup(document.getElementById('paperjs'));
-  var colors = [];
-  colors.push('#8B6969');
-  colors.push('#BC8F8F');
-  colors.push('#C67171');
-  colors.push('#EEB4B4');
-  colors.push('#F08080');
-  colors.push('#C65D57');
-  colors.push('#CDB7B5');
-  colors.push('#FC1501');
-  colors.push('#8B7D7B');
-  colors.push('#CD5B45');
-  colors.push('#8B4C39');
-  colors.push('#A78D84');
-  colors.push('#CD8162');
-  colors.push('#D19275');
-  colors.push('#FF9955');
-  colors.push('#FFF5EE');
-  colors.push('#EEE5DE');
-  colors.push('#CDAF95');
-  colors.push('#E7C6A5');
-  colors.push('#C9AF94');
-  colors.push('#9F703A');
-  colors.push('#CDC0B0');
-  colors.push('#CDBA96');
-  colors.push('#FFFAF0');
 
-  var back = new Path.Rectangle({
+  var colors = [
+    '#8B6969', '#BC8F8F', '#C67171', '#EEB4B4', '#F08080', '#C65D57',
+    '#CDB7B5', '#FC1501', '#8B7D7B', '#CD5B45', '#8B4C39', '#A78D84',
+    '#CD8162', '#D19275', '#FF9955', '#FFF5EE', '#EEE5DE', '#CDAF95',
+    '#E7C6A5', '#C9AF94', '#9F703A', '#CDC0B0', '#CDBA96', '#FFFAF0'
+  ];
+
+  paper.setup(document.getElementById('paperjs'));
+
+  //left stripe
+  var left = new Path.Rectangle({
     point: new Point(0, 0),
-    size: view.size,
-    fillColor: '#EDC393'
+    size: [view.size.width / 2, view.size.height],
+    fillColor: '#EDC393',
+    onFrame: function(event) {
+      var select = Math.floor(Math.abs(this.odom.full / 1000));
+      this.fillColor = colors[select % colors.length];
+    },
+    odom: {
+      full: 0,
+      integral: 0,
+      momentary: 0
+    }
   }).sendToBack();
 
-  //socket.io
+  //right stripe
+  var right = new Path.Rectangle({
+    point: new Point(view.size.width / 2, 0),
+    size: [view.size.width / 2, view.size.height],
+    fillColor: '#EDC393',
+    onFrame: function(event) {
+      var select = Math.floor(Math.abs(this.odom.full / 1000));
+      this.fillColor = colors[select % colors.length];
+    },
+    odom: {
+      full: 0,
+      integral: 0,
+      momentary: 0
+    }
+  }).sendToBack();
+
+  //networking - socket.io
+
   var socket = io('http://192.168.1.129:8080');
+  // var socket = io('http://10.10.10.239:8080');
   socket.on('connect', function() {
     console.log("i' m connected!");
   });
@@ -48,46 +59,48 @@ window.onload = function() {
   hm.add(new Hammer.Pan({
     direction: Hammer.DIRECTION_VERTICAL
   }));
-  var odom_integral = 0;
-  var odom_momentary = 0;
-  var odom = 0;
+  var odom_obj = left.odom;
+  var odom_target = 0; //0: left stripe, 1: right stripe
+  hm.on('panstart', function(ev) {
+    if (ev.center.x <= view.size.width / 2) {
+      odom_target = 0;
+      odom_obj = left.odom;
+    } else {
+      odom_target = 1;
+      odom_obj = right.odom;
+    }
+  });
+
   hm.on('panmove', function(ev) {
-    odom_momentary = ev.deltaY;
-    odom = odom_integral + odom_momentary;
-    var msg = "type : " + ev.type + "<br/>ev.deltaY : " + ev.deltaY + "<br/>odom : " + odom;
+    odom_obj.momentary = ev.deltaY;
+    odom_obj.full = odom_obj.integral + odom_obj.momentary;
+    var msg = "type : " + ev.type + "<br/>ev.deltaY : " + ev.deltaY + "<br/>odom_obj.full : " + odom_obj.full;
     $('#objstring').html(msg);
-    //
-    //emit 'odom'
+    //emit 'odom_target & odom_obj'
     socket.emit('scroll', {
-      odom_integral: odom_integral,
-      odom_momentary: odom_momentary
+      odom_target: odom_target,
+      odom_full: odom_obj.full
     });
-    //
-    var select = Math.floor(Math.abs(odom / 1000));
-    back.fillColor = colors[select % colors.length];
   });
 
   hm.on('panend', function(ev) {
-    odom_integral += ev.deltaY;
-    odom = odom_integral + odom_momentary;
+    odom_obj.integral += ev.deltaY;
+    odom_obj.full = odom_obj.integral;
   });
 
-  socket.on('scroll', function(odom) {
-    odom_momentary = odom.odom_momentary;
-    odom_integral = odom.odom_integral;
-    odom = odom_integral + odom_momentary;
+  socket.on('scroll', function(msg) {
+    if (msg.odom_target == 0) {
+      left.odom.integral = msg.odom_full;
+      left.odom.full = msg.odom_full;
+    } else if (msg.odom_target == 1) {
+      //deep copy
+      right.odom.integral = msg.odom_full;
+      right.odom.full = msg.odom_full;
+    }
     //
-    var msg = "network msg. received! : odom : " + odom;
+    var msg = "a network msg. received! : <br/>" + JSON.stringify(msg);
     $('#objstring').html(msg);
-    //
-    var select = Math.floor(Math.abs(odom / 1000));
-    back.fillColor = colors[select % colors.length];
   });
-
-  function onFrame(event) {
-    var select = Math.floor(Math.abs(odom / 1000));
-    back.fillColor = colors[select % colors.length];
-  }
 
   // //p5 canvas setup
   // new p5(function(p) {
