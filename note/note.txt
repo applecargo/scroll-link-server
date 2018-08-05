@@ -14,7 +14,7 @@ scroll-link
 
 3) 2 scroll stripe
 
-4) many scrool stripe
+4) many scroll stripe
 
 5) select mode. - focus 1 stripe or overview stripes
 
