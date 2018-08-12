@@ -26,7 +26,7 @@ SynthDef(\sine, {
 }).add;
 
 //sine percussive
-SynthDef(\sine_percussive, {
+SynthDef(\bufplay, {
 	arg out=0, freq=300, amp=1;
 	var sig, env;
 	env = EnvGen.kr(Env.perc, doneAction: Done.freeSelf);

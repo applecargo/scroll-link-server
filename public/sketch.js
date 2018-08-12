@@ -47,7 +47,7 @@ window.onload = function() {
 
   //networking - socket.io
 
-  var socket = io('http://192.168.1.129:8080');
+  var socket = io('http://192.168.1.105:8080');
   // var socket = io('http://10.10.10.239:8080');
   socket.on('connect', function() {
     console.log("i' m connected!");

@@ -17,8 +17,8 @@ NdefMixer(s)
 )
 
 //environment
-~nch = 6; //mtrack8
-//~nch = 2; //headphone
+//~nch = 6; //mtrack8
+~nch = 2; //headphone
 currentEnvironment.postln
 
 //TIP: clear Ndef
@@ -28,6 +28,106 @@ currentEnvironment.postln
 //s.sendMsg(\n_free, 1000);
 
 //---------------------------------------------------------------------------------
+
+
+SynthDescLib.global.browse;
+
+NdefMixer(s)
+
+s.boot;
+Ndef.clear; // clear all Ndef
+Ndef.defaultReshaping = \elastic;
+Ndef(\x).play(0, 2);
+Ndef(\x).fadeTime = 1.3;
+Ndef(\y, { Dust.ar(115, 0.1) });
+Ndef(\x, { Resonz.ar(Ndef.ar(\y), [700, 720], 0.001, 300) });
+// \elastic reshaping differs at following code.
+// without \elastic. --> Ndef('y'): wrapped channels from 2 to 1 channels
+// i.e. \y was 1 ch. yet \x is 2 ch. so ME happened.
+// then suddenly \y became 2 ch. then,
+// without \elastic..
+// \y -> \x bus should remain 1ch. so \y 'wrapping' to be 1ch.
+// (don't know clearly what it is exactly, 'wrapping')
+// and then ME to be 2ch.
+// so it might be mix-down and duplicate or 2nd channel will be simply lost.
+// with \elastic, redefine Bus to be 2ch. in between. then let ME happen as if \y was 2 ch. from start.
+Ndef(\y, { Dust2.ar([3, 115], [1, 0.1]) });
+Ndef(\x, { Resonz.ar(Ndef.ar(\y), [600, 1720], 0.01, 100) });
+Ndef(\x, { Splay.ar(Resonz.ar(Ndef(\y), [600, 1720, 820, 1000] * 1.5, 0.01, 100)) });
+Ndef(\y, { Dust.ar([3, 115, 5, 101] * 0.1, [1, 0.1]) });
+Ndef(\y, { Dust.ar([3, 115, 5, 101] * 10, [1, 0.1]/2) });
+Ndef(\y, { Dust.ar([1013, 415, 1115, 101] * (Ndef.kr(\aa) + 1), [0.1, 0.1]/2) });
+Ndef(\aa, { Blip.ar([0.03, 0.05, 0.1], 3).exprange(0.1, 100) });
+//\elastic also allows .ar <-> .kr
+Ndef(\y, { Dust.ar([1013, 415, 1115, 101] * (Ndef.ar(\aa) + 1), [0.1, 0.1]/2) });
+Ndef(\x, { Splay.ar(Resonz.ar(Ndef(\y), [600, 720, 320, 780] * (Ndef.ar(\aa).lag(0.01) * 0.3 + 1), 0.01, 100)).distort });
+Ndef(\aa, { Blip.ar([1, 0.5, 0.4], 30).exprange(0.1, 10) });
+Ndef(\y, { Impulse.ar([1, 2/3, 4/6, 2] * 100 * DelayC.ar(Ndef(\aa) + 1, 0.5, 0.5, 1, Ndef(\aa)), [0.1, 0.1]/2) });
+Ndef(\y, { Impulse.ar([1, 2/3, 4/6, 2] * 4 * DelayC.ar(Ndef(\aa) + 1, 0.5, 0.5, 1, Ndef(\aa)), [0.1, 0.1]/2) });
+Ndef(\y, { Impulse.ar([1, 2/3, 4/6, 2, 3] * 100 * DelayC.ar(Ndef.ar(\aa) + 1, 0.5, LFNoise1.kr(0.1 ! 4).range(0, 0.5), 1, Ndef.ar(\aa)), [0.1, 0.1]/2) });
+Ndef(\y, { Impulse.ar([1, 2/3, 4/6, 2, 9/8] * 100 * DelayC.ar(Ndef.ar(\aa) + 1, 0.5, LFNoise1.kr(3 ! 2).range(0, 0.5), 1, Ndef(\aa)), [0.1, 0.1]/2) });
+Ndef(\x, { Splay.ar(Resonz.ar(SplayAz.ar(4, Ndef.ar(\y)), [600, 720, 320, 780] * (Ndef.ar(\aa).lag(0.01) * 0.3 + 1), 0.01, 100)).distort });
+
+
+
+// mold tests
+s.boot; // important
+Ndef.clear;
+Ndef(\x).reshaping = \elastic;
+Ndef(\x, { SinOsc.ar([277, 377, 663]) });
+Ndef(\x).numChannels == 3;
+Ndef(\x).mold(1, \audio);
+// reshaping closely relates to 'molding' !
+Ndef(\x).numChannels == 1;
+Ndef(\x).rebuild; // ME expansion recovers..
+Ndef(\x).numChannels == 3;
+Ndef(\x).mold(2, \control);
+Ndef(\x, { SinOsc.kr([277, 377, 663]) });
+Ndef(\x).numChannels == 3;
+Ndef(\x).rate == \control;
+
+Ndef.clear;
+Ndef(\x).reshaping = nil;
+Ndef(\x, { SinOsc.ar([277, 377, 663]) });
+Ndef(\x, { SinOsc.ar([277, 377, 663, 1000]) });
+Ndef(\x).numChannels == 3;
+Ndef(\x).mold;
+Ndef(\x).numChannels == 4;
+Ndef(\x).mold(1, \audio);
+Ndef(\x).numChannels == 1;
+
+s.quit;
+Ndef.clear;
+Ndef(\x).reshaping = nil;
+Ndef(\x, { SinOsc.ar([277, 377, 663]) });
+Ndef(\x, { SinOsc.ar([277, 377, 663, 1000]) });
+Ndef(\x).numChannels == 3;
+Ndef(\x).mold;
+Ndef(\x).numChannels == 4;
+Ndef(\x).mold(1, \audio);
+Ndef(\x).numChannels == 1;
+Ndef(\x).rebuild;
+Ndef(\x).numChannels == 1;
+Ndef(\x).mold(2, \control);
+Ndef(\x, { SinOsc.kr([277, 377, 663]) });
+Ndef(\x).numChannels == 2;
+
+//isNeutral -> true if the proxy has no initialproxy has no ''
+// testing channel init
+Ndef.clear;
+Ndef(\x).bus;
+Ndef(\x).isNeutral;
+Ndef(\x).ar(3);
+Ndef(\x).ar(4);
+Ndef(\x).numChannels == 3;
+Ndef(\x, [1, 2, 3, 4, 5]);
+Ndef(\x).numChannels == 3;
+Ndef.clear;
+
+
+
+NodeMap
+
 
 //session # 1
 
@@ -66,11 +166,11 @@ Ndef(\ball).set(\preamp, 30);
 Ndef(\ball) <<>.freq Ndef(\ballff, {(BrownNoise.kr() + 1) * \range.kr(50) + \freq.kr(800)});
 Ndef(\ballff).set(\freq, 700);
 Ndef(\ball).set(\dectime, 0.07);
-Ndef(\ball).set(\amp, 4);
+Ndef(\ball).set(\amp, 1);
 //limiter
 Ndef(\ball).set(\limit, 2);
 //output channel
-Ndef(\ball).set(\pan, 5/~nch);
+Ndef(\ball).set(\pan, 1/~nch);
 )
 //extra.
 //a gui controller
@@ -135,6 +235,7 @@ Ndef(\lfo).set(\add, 0);
 //let them pannnnn...
 Ndef(\piano_sb) <<>.pan Ndef(\lfo);
 Ndef(\ball) <<>.pan Ndef(\lfo);
+Ndef(\buf_i) <<>.pan Ndef(\lfo);
 
 
 
@@ -190,8 +291,12 @@ Ndef(\low, {
 	PanAz.ar(~nch, out, (\pan.kr(0) + 1).mod(2), 0.5, 2, 0.5);
 }).play(0, ~nch);
 Ndef(\low).fadeTime = 2;
+Ndef(\low).xset(\amp, 0.0);
 Ndef(\low).xset(\amp, 1.5);
 Ndef(\low).xset(\base, 120);
+Ndef(\low).xset(\freq, 0.8);
+Ndef(\low).xset(\gain, 0.5);
+Ndef(\low).xset(\base, 1000);
 Ndef(\low) <<>.pan Ndef(\lfo);
 )
 //preset
@@ -200,6 +305,189 @@ Ndef(\low).xset(\base, 20);
 Ndef(\low).xset(\amp, 2);
 Ndef(\low).xset(\amp, 0);
 Ndef(\low).stop;
+
+
+
+
+
+
+
+
+//set # 5 - am 1
+(
+SynthDef("am1", {
+    var carrier, modulator, env;
+    env = Env.perc(
+        attackTime: \att.kr(0.01),
+        releaseTime: \rel.kr(3),
+        level: \amp.kr(0.2)
+    ).kr(2);
+    modulator = SinOsc.ar(\modfreq.kr(2)).range(0, 1);
+    carrier = SinOsc.ar(freq: \freq.kr(10), mul: env * modulator);
+    Out.ar(0, carrier ! 2);
+}).add;
+)
+
+(
+Pdef(\snd3,
+	Pbind(
+		\instrument, "am1",
+		//\degree, Prand([0, 2], inf),
+		\degree, Prand([0, 2, 5, 3.5, -5], inf), //a bit jazzy!
+		\modfreq, Prand([1, 5, 10, 50, 100], inf),
+		\amp, 0.4,
+		\dur, 0.2,
+		\att, 0.01,
+		\rel, Pwhite(0.3, 0.5),
+		\pos, Pwhite(-1, 1.0)
+	)
+).play;
+)
+
+//a nice playing seq - a bit jazzy!
+(
+Pdef(\snd3,
+	Pbind(
+		\instrument, "am1",
+		//\degree, Prand([0, 2], inf),
+		\degree, Prand([0, 2, 5, 3.5, -5], inf), //a bit jazzy!
+		\modfreq, Prand([1, 5, 10, 50, 100], inf),
+		\amp, 0.4,
+		\dur, 0.2,
+		\att, 0.01,
+		\rel, Pwhite(0.3, 0.5),
+		\pos, Pwhite(-1, 1.0)
+	)
+).stop;
+)
+
+
+
+
+
+
+
+
+
+
+//set # 5 - buf (interference)
+~buf_i = Buffer.read(s, Platform.userHomeDir +/+ "Paperjs.sync/scroll-link-server/sc/audio/interference1.wav");
+~buf_i.free;
+currentEnvironment.postln;
+(
+Ndef(\buf_i, {
+	var out;
+	//out = PlayBuf.ar(2, ~buf_i, BufRateScale.kr(~buf_i), doneAction:Done.freeSelf);
+	out = Mix.ar(PlayBuf.ar(2, ~buf_i, (BufRateScale.kr(~buf_i)), loop:1)) * \amp.kr(1);
+	PanAz.ar(~nch, out, (\pan.kr(0) + 1).mod(2), 0.5, 2, 0.5);
+}).play(0, ~nch);
+Ndef(\buf_i).fadeTime = 2;
+Ndef(\buf_i).xset(\amp, 10);
+Ndef(\buf_i).xset(\rate, BufRateScale.kr(~buf_i));
+~abc = NodeProxy.new;
+~abc.source = BufRateScale.kr(~buf_i);
+currentEnvironment.postln;
+Ndef(\buf_i) <<>.rate ~abc;
+Ndef(\buf_i).xset(\pan, 8/~nch);
+Ndef(\buf_i) <<>.pan Ndef(\lfo);
+)
+//preset
+(
+Ndef(\low).xset(\base, 20);
+Ndef(\low).xset(\amp, 2);
+Ndef(\low).xset(\amp, 0);
+Ndef(\low).stop;
+(
+x = SynthDef(\bufplay,{ arg out = 0, bufnum;
+    Out.ar(out, PlayBuf.ar(1, bufnum, BufRateScale.kr(bufnum)));
+}).play(s,[\bufnum, b]);
+)
+x.free;
+~interf.free;
+
+
+
+
+
+
+
+
+
+
+
+// 1. define the synth
+(
+SynthDef(\bell, {
+	|fs=1, t60=1, pitchy=1, amp=0.25, gate=1|
+	var sig, exciter;
+	//exciter = Impulse.ar(0);
+	exciter = WhiteNoise.ar() * EnvGen.ar(Env.perc(0.001, 0.05), gate) * 0.25;
+	sig = Klank.ar(
+		`[
+			[1, 2, 2.803, 3.871, 5.074, 7.81, 10.948, 14.421],   // freqs
+			[1, 0.044, 0.891, 0.0891, 0.794, 0.1, 0.281, 0.079], // amplitudes
+			[1, 0.205, 1, 0.196, 0.339, 0.047, 0.058, 0.047]*t60     // ring times
+		],
+		exciter,
+		freqscale:fs*pitchy);
+	sig = FreeVerb.ar(sig) * amp;
+	DetectSilence.ar(sig, 0.001, 0.5, doneAction:2);
+	Out.ar(0, sig!2);
+}).add
+)
+
+
+// 2. Test a single note
+x = Synth(\bell, [\fs, 60.midicps, \t60, 9.177, \pitchy, 8]);
+
+
+// 3. Test different textures
+
+// glokenspiel
+(
+Pbind(
+	\instrument, \bell,
+	\fs, Pseq( (60..72), 1).midicps,
+	\t60, 6,
+	\pitchy, 4,
+	\dur, 0.25
+).play;
+)
+
+// tubular bells
+(
+Pbind(
+	\instrument, \bell,
+	\fs, Pseq( (60..72), 1).midicps,
+	\t60, 9,
+	\pitchy, 1,
+	\dur, 1
+).play;
+)
+
+// xilophone
+(
+Pbind(
+	\instrument, \bell,
+	\fs, Pseq( (60..72), 1).midicps,
+	\t60, 1,
+	\pitchy, 4,
+	\dur, 0.25
+).play;
+)
+
+// marimba
+(
+Pbind(
+	\instrument, \bell,
+	\fs, Pseq( (60..72), 1).midicps,
+	\t60, 0.5,
+	\pitchy, 1,
+	\dur, 0.25
+).play;
+)
+
+
 
 
 

@@ -1,3 +1,147 @@
+2018. 08. 12.
+
+so, let's try a full system.
+
+webpages <-(websocket)-> nodejs webserver <-osc-> puredata
+-> puredata <-another osc-> supercollider
+-> puredata <-firmata-> esp8266 controller <-mesh-> soundmesh freenodes
+
+main console is puredata. for the performer(leader/manager/conductor).
+participants will have consoles on the webpages on their smartphones.
+
+webpages also have sounds (Tone.js) / graphical feedbacks (Paper.js-vector graphics, P5.js-raster graphics)
+
+mainly samplers. but supercollider will help on generative sounds i.e. OteyPianoStrings + Pdef player etc.
+
+---
+
+protocols
+
+1) websocket: 1 topic called. 'scroll' + (more)
+2) osc: same as 1). all should be relayed
+3) another osc: 'synth' + (more)
+4) firmata: (firmata + taskscheduler integration possible?? if so, no prob.)
+5) mesh: CCCC#SSS@B (command(play/stop) + song id + channel), but can be changed.
+
+---
+
+webpage controls --> first make a full console for the conductor @ puredata, then it will be more clear.
+
+---
+
+puredata console.
+
+1) many samples. added dynamically. what about.. AUTOMATISM? well it doesn't support samplers. so my 'stage' patch?
+2) loopbanks.
+
+
+---
+
+2018. 08. 08.
+
+so. yeap. 2081. i won't be alive. will be dead for sure.
+what about 10 yrs. what am i going to be by then?
+well i ve spent 10 yrs. doing this life.
+now another 10 yrs. will be coming.
+another same and nice and flourishing 10 yrs? to come? or another new start of 10 yrs.
+
+-
+
+oh it's getting warm again.
+9:20pm.
+
+-
+
+the thing for coming performance/happening with people. @ 18th of August.
+
+-
+
+everything need to improve until 2081.
+well. my physical power will decrease of course.
+but sth. else. i want to be improving on.
+we are just so much small and short.
+seniors. is just 10 yrs older.
+parenrs are just 30 yrs older.
+all of us are so short.
+this language is also very short.
+no one will remember the programming language C @ 2081.
+or no one will use a PC in 2081.
+
+-
+
+but until then. every moment. i need to improve.
+on what? physical strength will decrease.
+and then. actually your power of thinking will also decrease.
+they are pretty closely related, in fact.
+you won't be flourishing until 2081.
+one day you will discover that it is not anymore improving at all.
+you will find that oh yeah. i just cannot stand still against the wind. against the time.
+
+-
+
+then, hey for what you wanna improve anyway?
+
+-
+
+if we gonna die,
+if we will be gone one day,
+whatever we achieve,
+it will be simply for our tomorrow,
+better tomorrow.
+(which is the death. our tomorrow is the death. in vain.)
+
+-
+
+everybody comes and goes..
+we are all victims.
+
+-
+
+what hope you have for a better world. better society. better relationship.
+but whatever you try, in the end, we are not facing the mere fact of our death.
+
+-
+
+machines don't die.
+algorithms don't die.
+humans die.
+animals die.
+flowers die.
+trees die.
+electricy doesn't die.
+
+-
+
+so, i say we are the victims.
+we need to be fixed. or made anew.
+
+-
+
+it's dangerous idea.. cause now i don't know what to do for the works of mine.
+it's like.. a lost train.
+i've been stopped. and static. no will to do any move.
+
+-
+
+
+
+2018. 08. 06.
+
+hi. so..
+we are back.
+we will do better screen/interaction for the project.
+
+scrolling should register visually more immediate feedback on the user's screen (webpage) -> paperjs or p5.js
+so. now.. we are using paper.js.. but. what about p5.
+
+well we are anyway for the moment much fluent paperjs than p5. let's go as much as we can with paperjs, first.
+
+--
+
+and. we have problem of too much events. from hammer.js. don't forget to fix it asap.
+
+--------
+
 published secret == internet itself!
 
 how can it be sth. consolation: "comfort received by a person after a loss or disappointment."

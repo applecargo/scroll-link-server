@@ -59,58 +59,141 @@ var io = require('socket.io')(httpServer, {
 });
 
 //express configuration
-app.use(express.static('public'));
+//app.use(express.static('public'));
+//app.use(express.static('motive1'));
+//app.use(express.static('motive2'));
+app.use(express.static('numbers'));
 
 //// osc.js configuration (UDP)
 var osc = require("osc");
+var soundserver_ip = '224.2.2.2';
+//apps cannot share port.. (pd & sc)
+//for puredata : tx: 57000, rx: 57001
+var udp_pd = new osc.UDPPort({
+  localAddress: '0.0.0.0', //NOTE: '127.0.0.1' doesn't work!!
+  localPort: 57001,
+  remoteAddress: soundserver_ip,
+  remotePort: 57000,
+  metadata: true
+});
+//for supercollider : tx: 57120, rx: 57121
 var udp_sc = new osc.UDPPort({
   localAddress: '0.0.0.0', //NOTE: '127.0.0.1' doesn't work!!
   localPort: 57121,
-  // remoteAddress: '192.168.1.129',
-  // remoteAddress: '192.168.1.123',
-  //remoteAddress: '10.10.10.71',
-  remoteAddress: '0.0.0.0',
+  remoteAddress: soundserver_ip,
   remotePort: 57120,
   metadata: true
 });
 
-//firstly establish/ensure osc conn.
-udp_sc.on("ready", function() {
+//'scroll' status array
+var scroll = {};
+scroll['a'] = {
+  value: 0,
+  islocked: false
+};
+scroll['b'] = {
+  value: 0,
+  islocked: false
+};
+scroll['c'] = {
+  value: 0,
+  islocked: false
+};
+scroll['d'] = {
+  value: 0,
+  islocked: false
+};
+scroll['e'] = {
+  value: 0,
+  islocked: false
+};
+scroll['f'] = {
+  value: 0,
+  islocked: false
+};
+scroll['g'] = {
+  value: 0,
+  islocked: false
+};
+scroll['h'] = {
+  value: 0,
+  islocked: false
+};
+scroll['i'] = {
+  value: 0,
+  islocked: false
+};
+scroll['j'] = {
+  value: 0,
+  islocked: false
+};
 
-  //socket.io events
-  io.on('connection', function(socket) {
+//firstly establish/ensure osc conn. - supercollider & puredata
+Promise.all([
+  new Promise(function(resolve, reject) { udp_pd.on("ready", function() { resolve(0); console.log('udp_pd ready..'); } ); }),
+  new Promise(function(resolve, reject) { udp_sc.on("ready", function() { resolve(0); console.log('udp_sc ready..'); } ); }),
+]).then(function(results) {
+    //socket.io events
+    io.on('connection', function(socket) {
 
-    //entry log.
-    console.log('someone connected.');
+      //entry log.
+      console.log('someone connected.');
 
-    //msg. for everybody - scroll events
-    socket.on('scroll', function(msg) {
-
-      //websocket clients: sending to all clients except sender
-      socket.broadcast.emit('scroll', msg);
-      console.log('scroll :');
-      console.log(msg);
-
-      //osc clients: send '/odom
-      udp_sc.send({
-        address: "/odom",
-        args: [{
-          type: "i",
-          value: msg.odom_target
-        }, {
-          type: "i",
-          value: msg.odom_full
-        }]
+      //let a new client be up-to-date
+      Object.keys(scroll).forEach(function(key) { // ES6 --> https://stackoverflow.com/a/5737192
+        socket.emit('scroll', {
+          key: key,
+          data: scroll[key]
+        });
       });
+
+      //msg. for everybody - scroll events
+      socket.on('scroll', function(msg) {
+
+        //update server's status array
+        scroll[msg.key].value = msg.data.value;
+        scroll[msg.key].islocked = msg.data.islocked;
+
+        //websocket clients: sending to all clients except sender
+        //relay the message to everybody
+        socket.broadcast.emit('scroll', msg);
+
+        //DEBUG
+        //console.log('scroll :');
+        console.log(msg);
+
+        //osc clients: send '/scroll
+        udp_pd.send({
+          address: "/scroll",
+          args: [{
+            type: "s",
+            value: msg.key
+          }, {
+            type: "f",
+            value: msg.data.value
+          }]
+        });
+        //
+        udp_sc.send({
+          address: "/scroll",
+          args: [{
+            type: "s",
+            value: msg.key
+          }, {
+            type: "f",
+            value: msg.data.value
+          }]
+        });
+      });
+
+      //exit log.
+      socket.on('disconnect', function() {
+        console.log('someone disconnected.');
+
+        //TODO: BUG: disconnection one's 'locked' keys must be released! otherwise, nobody can use it! (even the one who locked it, when returned.)
+      });
+
     });
-
-    //exit log.
-    socket.on('disconnect', function() {
-      console.log('someone disconnected.');
-    });
-
-  });
-
 });
 
 // //message handler
@@ -133,11 +216,19 @@ udp_sc.on("ready", function() {
 // });
 
 //osc.js - start service
+udp_pd.open();
+udp_pd.on("ready", function() {
+  console.log(
+    "[udp] ready (udp_pd) : \n" +
+      "\tlistening on --> " + udp_pd.options.localAddress + ":" + udp_pd.options.localPort + "\n" +
+      "\tspeaking to -> " + udp_pd.options.remoteAddress + ":" + udp_pd.options.remotePort + "\n"
+  );
+});
 udp_sc.open();
 udp_sc.on("ready", function() {
   console.log(
-    "[udp] ready : \n" +
-    "\treceive@" + udp_sc.options.localAddress + ":" + udp_sc.options.localPort + "\n" +
-    "\tsend@" + udp_sc.options.remoteAddress + ":" + udp_sc.options.remotePort + "\n"
+    "[udp] ready (udp_sc) : \n" +
+      "\tlistening on --> " + udp_sc.options.localAddress + ":" + udp_sc.options.localPort + "\n" +
+      "\tspeaking to -> " + udp_sc.options.remoteAddress + ":" + udp_sc.options.remotePort + "\n"
   );
 });
