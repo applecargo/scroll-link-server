@@ -1,5 +1,6 @@
 //// socket.io client
 var socket = require('socket.io-client')('https://choir.run');
+//var socket = require('socket.io-client')('http://192.168.219.156:8080');
 
 //// osc.js configuration (UDP)
 var osc = require("osc");
@@ -44,8 +45,78 @@ Promise.all([
   });
 
   //
+  socket.on('voice', function(msg){
+
+    //DEBUG
+    //console.log('voice :');
+    console.log(msg);
+
+    //// simply relaying messages to apps.
+
+    // to puredata
+    udp_pd.send({
+      address: "/voice",
+      args: [{
+        type: "f",
+        value: msg.id
+      }, {
+        type: "f",
+        value: msg.key
+      }]
+    });
+
+    // to supercollider
+    udp_sc.send({
+      address: "/voice",
+      args: [{
+        type: "f",
+        value: msg.id
+      }, {
+        type: "f",
+        value: msg.key
+      }]
+    });
+
+  });
+
+  //
+  socket.on('sound_ctrl', function(msg){
+
+    //DEBUG
+    //console.log('sound_ctrl :');
+    console.log(msg);
+
+    //// simply relaying messages to apps.
+
+    // to puredata
+    udp_pd.send({
+      address: "/sound_ctrl",
+      args: [{
+        type: "f",
+        value: msg.id
+      }, {
+        type: "f",
+        value: msg.action
+      }]
+    });
+
+    // to supercollider
+    udp_sc.send({
+      address: "/sound_ctrl",
+      args: [{
+        type: "f",
+        value: msg.id
+      }, {
+        type: "f",
+        value: msg.action
+      }]
+    });
+
+  });
+
+  //
   socket.on('scroll', function(msg){
-    
+
     //DEBUG
     //console.log('scroll :');
     console.log(msg);
@@ -63,7 +134,7 @@ Promise.all([
         value: msg.data.value
       }]
     });
-    
+
     // to supercollider
     udp_sc.send({
       address: "/scroll",
@@ -75,14 +146,14 @@ Promise.all([
         value: msg.data.value
       }]
     });
-    
+
   });
 
   //
   socket.on('disconnect', function(){
     console.log("[osc-receiver] i'm disconnected.");
   });
-  
+
 });
 
 // //message handler

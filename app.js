@@ -43,13 +43,13 @@ var io = require('socket.io')(httpsWebServer, {
 });
 
 // //NOTE: option (2) - simple http dev server (8080)
-
+//
 // var http = require('http');
 // var express = require('express');
 // var app = express();
 // var httpServer = http.createServer(app);
 // httpServer.listen(8080);
-
+//
 // //http socket.io server @ port 8080 (same port as WWW service)
 // var io = require('socket.io')(httpServer, {
 //   'pingInterval': 1000,
@@ -57,53 +57,29 @@ var io = require('socket.io')(httpsWebServer, {
 // });
 
 //express configuration
-//app.use(express.static('public'));
-//app.use(express.static('motive1'));
-//app.use(express.static('motive2'));
-app.use(express.static('numbers'));
+app.use(express.static('public'));
 
 //'scroll' status array
 var scroll = {};
-scroll['a'] = {
-  value: 0,
-  islocked: false
-};
-scroll['b'] = {
-  value: 0,
-  islocked: false
-};
-scroll['c'] = {
-  value: 0,
-  islocked: false
-};
-scroll['d'] = {
-  value: 0,
-  islocked: false
-};
-scroll['e'] = {
-  value: 0,
-  islocked: false
-};
-scroll['f'] = {
-  value: 0,
-  islocked: false
-};
-scroll['g'] = {
-  value: 0,
-  islocked: false
-};
-scroll['h'] = {
-  value: 0,
-  islocked: false
-};
-scroll['i'] = {
-  value: 0,
-  islocked: false
-};
-scroll['j'] = {
-  value: 0,
-  islocked: false
-};
+scroll['a'] = { value: 0, islocked: false };
+scroll['b'] = { value: 0, islocked: false };
+scroll['c'] = { value: 0, islocked: false };
+scroll['d'] = { value: 0, islocked: false };
+scroll['e'] = { value: 0, islocked: false };
+scroll['f'] = { value: 0, islocked: false };
+scroll['g'] = { value: 0, islocked: false };
+scroll['h'] = { value: 0, islocked: false };
+
+//'sound' status array
+var sound_stat = {};
+sound_stat['a'] = { id: 0, isplaying: false, playcount: 0 };
+sound_stat['b'] = { id: 1, isplaying: false, playcount: 0 };
+sound_stat['c'] = { id: 2, isplaying: false, playcount: 0 };
+sound_stat['d'] = { id: 3, isplaying: false, playcount: 0 };
+sound_stat['e'] = { id: 4, isplaying: false, playcount: 0 };
+sound_stat['f'] = { id: 5, isplaying: false, playcount: 0 };
+sound_stat['g'] = { id: 6, isplaying: false, playcount: 0 };
+sound_stat['h'] = { id: 7, isplaying: false, playcount: 0 };
 
 //socket.io events
 io.on('connection', function(socket) {
@@ -111,7 +87,7 @@ io.on('connection', function(socket) {
   //entry log.
   console.log('someone connected.');
 
-  //let a new client be up-to-date
+  //let this new member be up-to-date immediately
   Object.keys(scroll).forEach(function(key) { // ES6 --> https://stackoverflow.com/a/5737192
     socket.emit('scroll', {
       key: key,
@@ -119,27 +95,109 @@ io.on('connection', function(socket) {
     });
   });
 
-  //msg. for everybody - scroll events
+  //on 'scroll' --> relay the msg. to everyone except sender
   socket.on('scroll', function(msg) {
 
-    //update server's status array
+    //update server's scroll database
     scroll[msg.key].value = msg.data.value;
     scroll[msg.key].islocked = msg.data.islocked;
 
-    //websocket clients: sending to all clients except sender
-    //relay the message to everybody
+    //relay the message to everybody except sender
     socket.broadcast.emit('scroll', msg);
 
     //DEBUG
     //console.log('scroll :');
     console.log(msg);
+  });
 
-    //exit log.
-    socket.on('disconnect', function() {
-      console.log('someone disconnected.');
+  //on 'sound' --> relay the message to everybody INCLUDING sender
+  var soundactive = false;
+  socket.on('sound', function(sound) {
 
-      //TODO: BUG: disconnection one's 'locked' keys must be released! otherwise, nobody can use it! (even the one who locked it, when returned.)
-    });
+    if (sound.action == 'start') {
+      sound_stat[sound.name].playcount++;
+      console.log('playcount: ' + sound_stat[sound.name].playcount);
+      if (sound_stat[sound.name].isplaying == false) {
+        sound_stat[sound.name].isplaying = true;
+        //emit start
+        //relay the message to everybody INCLUDING sender -- but actually only 'receiver.js' is listening 'sound_ctrl' msg.
+        io.emit('sound_ctrl', {id: sound_stat[sound.name].id, action: 1});
+      }
+      soundactive = true;
+    }
+    else if (sound.action == 'stop') {
+      if (sound_stat[sound.name].playcount > 0) {
+        sound_stat[sound.name].playcount--;
+      }
+      console.log('playcount: ' + sound_stat[sound.name].playcount);
+      if (sound_stat[sound.name].isplaying == true && sound_stat[sound.name].playcount <= 0) {
+        sound_stat[sound.name].isplaying = false;
+        //emit stop
+        //relay the message to everybody INCLUDING sender -- but actually only 'receiver.js' is listening 'sound_ctrl' msg.
+        io.emit('sound_ctrl', {id: sound_stat[sound.name].id, action: 0});
+      }
+      soundactive = false;
+    }
 
+    //DEBUG
+    console.log('sound.name :' + sound.name);
+    console.log('sound.action :' + sound.action);
+  });
+
+  //on 'voice'
+  socket.on('voice', function(voice) {
+
+    //relay the message to everybody INCLUDING sender // TODO: actually only sound server is listening...
+    io.emit('voice', voice);
+
+    //DEBUG
+    console.log('voice.id :' + voice.id);
+    console.log('voice.key :' + voice.key);
+    //{name: voice_selected, key: this._idx}
+  })
+
+  //on 'page' --> relay the message to everybody INCLUDING sender
+  socket.on('page', function(page) {
+
+    //relay the message to everybody INCLUDING sender
+    io.emit('page', page);
+
+    //DEBUG
+    console.log('page.name :' + page.name);
+  });
+
+  //on 'clap' --> relay the message to everybody INCLUDING sender
+  socket.on('clap', function(clap) {
+
+    //relay the message to everybody INCLUDING sender
+    io.emit('clap', clap);
+
+    //DEBUG
+    console.log('clap.name :' + clap.name);
+  });
+
+  //on 'disconnect'
+  socket.on('disconnect', function() {
+    //
+    if (soundactive == true) {
+      soundactive = false;
+      if (sound_stat[sound.name].playcount > 0) {
+        sound_stat[sound.name].playcount--;
+      }
+      if (sound_stat[sound.name].isplaying == true) {
+        sound_stat[sound.name].isplaying = false;
+        //emit stop
+        //relay the message to everybody INCLUDING sender -- but actually only 'receiver.js' is listening 'sound_ctrl' msg.
+        io.emit('sound_ctrl', {id: sound_stat[sound.name].id, action: 0});
+      }
+    }
+
+    console.log('someone disconnected.');
+
+    //NOTE, TODO, BUG:
+    //    --> disconnection one's 'locked' keys must be released!
+    //        otherwise, nobody can use it! (even the one who locked it, when returned.)
+    //
+    //        (but, then server firstly should also remember 'who' locked 'which' key...)
   });
 });

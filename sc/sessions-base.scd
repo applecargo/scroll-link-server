@@ -800,3 +800,31 @@ Pdefn(\degree, (Pexprand(1, 8, inf) - 1).round);
 Pdefn(\dur, Pwrand(#[0.25, 0.5, 0.75], #[0.5, 0.3, 0.2], inf));
 
 p.stop;
+
+// (
+// SynthDef("help-GrayNoise", { arg out=0;
+//     Out.ar(out,
+//         GrayNoise.ar(0.1)
+//     )
+// }).play;
+// )
+
+// frequency envelope with random times
+(
+{
+    var freq;
+    freq = DemandEnvGen.ar(
+        Dseq([204, 400, 201, 502, 300, 200], inf),
+        Drand([1.01, 0.2, 0.1, 2], inf) * MouseY.kr(0.01, 3, 1),
+        7 // cubic interpolation
+    );
+	//LPF.ar(in: WhiteNoise.ar(0.1), freq: freq * [1, 1.01], mul: 1, add: 0) * 10
+	//LPF.ar(in: BrownNoise.ar(0.1), freq: freq * [1, 1.01], mul: 1, add: 0) * 10
+	LPF.ar(in: GrayNoise.ar(0.1), freq: freq * [1, 1.01], mul: 1, add: 0) * 10
+	////BPF.ar(in: 0, freq: 440, rq: 1, mul: 1, add: 0)
+	//BPF.ar(in: GrayNoise.ar(0.1), freq: freq * [1, 1.01], rq:0.5, mul: 1, add: 0) * 10
+	//BPF.ar(in: PinkNoise.ar(0.1), freq: freq * [1, 1.01], rq:0.5, mul: 1, add: 0) * 50
+    //SinOsc.ar(freq * [1, 1.01]) * 0.1
+
+}.play;
+)
