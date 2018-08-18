@@ -143,9 +143,10 @@ $(document).ready(function() {
     c_page_prev._socket = socket;
     c_page_prev.fillColor = 'pink';
     c_page_prev.onClick = function() {
-      this._socket.emit('page', {
-        name: getScreenNamePrev()
-      });
+      // this._socket.emit('page', {
+      //   name: getScreenNamePrev()
+      // });
+      prevScreen();
     };
 
     var c_page_next = new Group();
@@ -163,9 +164,10 @@ $(document).ready(function() {
     c_page_next._socket = socket;
     c_page_next.fillColor = 'pink';
     c_page_next.onClick = function() {
-      this._socket.emit('page', {
-        name: getScreenNameNext()
-      });
+      // this._socket.emit('page', {
+      //   name: getScreenNameNext()
+      // });
+      nextScreen();
     };
 
     //screen #1
