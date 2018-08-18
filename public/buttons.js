@@ -298,12 +298,12 @@ $(document).ready(function() {
       'h': 7
     }
 
-    for (var row = 0; row < 5; row++) {
-      for (var col = 0; col < 4; col++) {
+    for (var row = 0; row < 4; row++) {
+      for (var col = 0; col < 2; col++) {
         var idx = row*4 + col;
         var c = new Path.Circle({
-          center: [col*vssw*2 + vssw*2, row*vssw*2 + vssw*6],
-          radius: vssw * 0.8,
+          center: [col*vssw*4 + vssw*2, row*vssw*4 + vssw*6],
+          radius: vssw * 1.6,
           fillColor: new Color({
             hue: getRandom(0, 180),
             saturation: 1,
@@ -329,7 +329,7 @@ $(document).ready(function() {
         new PointText({
           point: c.bounds.topLeft + [0, -5],
           content: Object.keys(buttons)[idx],
-          fontSize: '1em',
+          fontSize: '2em',
           fontWeight: 'bold',
           fillColor: c.fillColor
         });
