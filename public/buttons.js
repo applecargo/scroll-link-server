@@ -298,8 +298,8 @@ $(document).ready(function() {
       'h': 7
     }
 
-    for (var row = 0; row < 4; row++) {
-      for (var col = 0; col < 2; col++) {
+    for (var row = 0; row < 3; row++) {
+      for (var col = 0; col < 3; col++) {
         var idx = row*4 + col;
         var c = new Path.Circle({
           center: [col*vssw*3 + vssw*2, row*vssw*3 + vssw*6],
