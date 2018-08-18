@@ -302,8 +302,8 @@ $(document).ready(function() {
       for (var col = 0; col < 2; col++) {
         var idx = row*4 + col;
         var c = new Path.Circle({
-          center: [col*vssw*4 + vssw*2, row*vssw*4 + vssw*6],
-          radius: vssw * 1.6,
+          center: [col*vssw*3 + vssw*2, row*vssw*3 + vssw*6],
+          radius: vssw * 1.2,
           fillColor: new Color({
             hue: getRandom(0, 180),
             saturation: 1,
