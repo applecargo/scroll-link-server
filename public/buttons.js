@@ -235,8 +235,8 @@ $(document).ready(function() {
     var keysize = vssw*1;
     for (var idx = 0; idx < 10; idx++) {
       new Path.Rectangle({
-        point: [vssw*1.5, (keysize + 5) * idx + vssw * 4.5],
-        size: [vssw*7, keysize],
+        point: [vssw*1.5, (keysize + 5) * idx + vssw * 3.5],
+        size: [vssw*5, keysize],
         fillColor: 'white',
         _restfill: 'white',
         _activefill: new Color({
@@ -262,22 +262,22 @@ $(document).ready(function() {
     var keysize2 = vssw*0.9;
     for (; idx < 2; idx++) {
       new Path.Rectangle({
-        point: [vssw*1.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 4.5 + keysize / 2],
-        size: [vssw*3.7, keysize2],
+        point: [vssw*1.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2],
+        size: [vssw*3, keysize2],
         fillColor: '#444'
       });
     }
     for (; idx < 5; idx++) {
       new Path.Rectangle({
-        point: [vssw*1.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 4.5 + keysize / 2 + keysize],
-        size: [vssw*3.7, keysize2],
+        point: [vssw*1.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2 + keysize],
+        size: [vssw*3, keysize2],
         fillColor: '#444'
       });
     }
     for (; idx < 7; idx++) {
       new Path.Rectangle({
-        point: [vssw*1.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 4.5 + keysize / 2 + keysize * 2],
-        size: [vssw*3.7, keysize2],
+        point: [vssw*1.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2 + keysize * 2],
+        size: [vssw*3, keysize2],
         fillColor: '#444'
       });
     }
