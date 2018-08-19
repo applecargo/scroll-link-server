@@ -98,8 +98,8 @@ $(document).ready(function() {
     var top = new Layer(); // new Layer() will be automatically activated at the moment.
 
     //networking - socket.io
-    //var socket = io('http://192.168.219.156:8080');
-    var socket = io('https://choir.run');
+    var socket = io('http://192.168.1.105:8080');
+    //var socket = io('https://choir.run');
 
     //net. connection marker
     var netstat = new Path.Circle({
@@ -299,7 +299,7 @@ $(document).ready(function() {
       ]
     ).onClick = function() {
       //go to the page
-      window.location.href = "./scroll8.html";
+      window.location.href = "./scroll6.html";
     };
 
     //screen #4

@@ -1,6 +1,6 @@
 //// socket.io client
-var socket = require('socket.io-client')('https://choir.run');
-//var socket = require('socket.io-client')('http://192.168.219.156:8080');
+//var socket = require('socket.io-client')('https://choir.run');
+var socket = require('socket.io-client')('http://192.168.1.105:8080');
 
 //// osc.js configuration (UDP)
 var osc = require("osc");
