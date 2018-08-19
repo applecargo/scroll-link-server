@@ -96,6 +96,19 @@ io.on('connection', function(socket) {
   });
 
   //on 'scroll' --> relay the msg. to everyone except sender
+  socket.on('scroll-get', function(key, fn) {
+    console.log('investigating...');
+    console.log(key);
+    if (scroll[key].islocked == false) {
+      fn(true);
+      scroll[key].islocked = true;
+    }
+    else if (scroll[key].islocked == true) {
+      fn(false);
+    }
+  });
+
+  //on 'scroll' --> relay the msg. to everyone except sender
   socket.on('scroll', function(msg) {
 
     //update server's scroll database
