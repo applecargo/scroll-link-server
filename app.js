@@ -197,9 +197,9 @@ io.on('connection', function(socket) {
     scroll[msg.key].islocked = msg.data.islocked;
 
     //relay the message to everybody except sender
-    //socket.broadcast.emit('scroll', msg);
-    //relay the message to everybody INCLUDING sender
-    io.emit('scroll', msg);
+    socket.broadcast.emit('scroll', msg);
+    // //relay the message to everybody INCLUDING sender
+    // io.emit('scroll', msg);
 
     //DEBUG
     //console.log('scroll :');
