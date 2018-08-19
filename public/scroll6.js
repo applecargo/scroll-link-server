@@ -257,6 +257,8 @@ $(document).ready(function() {
           socket.emit('scroll-get', scrollkey, function(response) {
             console.log(response);
             resolve(response);
+            scroll[scrollkey].islocked = true;
+            throttled_send(scrollkey, scroll[scrollkey].value, true);
           });
         })
       ]).then(function(response) {
