@@ -248,6 +248,7 @@ $(document).ready(function() {
     } else if (ev.center.x < window.innerWidth / 6 * 6) {
       scrollkey = 'f';
     }
+    scrollactive = false;
     if (scroll[scrollkey] != undefined) {
       //try 'get'
       console.log('getting scroll...');
