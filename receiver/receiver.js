@@ -1,6 +1,6 @@
 //// socket.io client
-//var socket = require('socket.io-client')('https://choir.run');
-var socket = require('socket.io-client')('http://192.168.1.105:8080');
+var socket = require('socket.io-client')('https://choir.run');
+//var socket = require('socket.io-client')('http://192.168.1.105:8080');
 
 //// osc.js configuration (UDP)
 var osc = require("osc");
@@ -35,17 +35,27 @@ var udp_sc = new osc.UDPPort({
 
 //firstly establish/prepare osc conn. - supercollider & puredata
 Promise.all([
-  new Promise(function(resolve, reject) { udp_pd.on("ready", function() { resolve(0); console.log('udp_pd ready..'); } ); }),
-  new Promise(function(resolve, reject) { udp_sc.on("ready", function() { resolve(0); console.log('udp_sc ready..'); } ); }),
+  new Promise(function(resolve, reject) {
+    udp_pd.on("ready", function() {
+      resolve(0);
+      console.log('udp_pd ready..');
+    });
+  }),
+  new Promise(function(resolve, reject) {
+    udp_sc.on("ready", function() {
+      resolve(0);
+      console.log('udp_sc ready..');
+    });
+  }),
 ]).then(function(results) {
 
   //
-  socket.on('connect', function(){
+  socket.on('connect', function() {
     console.log("[osc-receiver] i'm connected.");
   });
 
   //
-  socket.on('voice', function(msg){
+  socket.on('voice', function(msg) {
 
     //DEBUG
     //console.log('voice :');
@@ -80,7 +90,7 @@ Promise.all([
   });
 
   //
-  socket.on('sound_ctrl', function(msg){
+  socket.on('sound_ctrl', function(msg) {
 
     //DEBUG
     //console.log('sound_ctrl :');
@@ -115,7 +125,7 @@ Promise.all([
   });
 
   //
-  socket.on('scroll', function(msg){
+  socket.on('scroll', function(msg) {
 
     //DEBUG
     //console.log('scroll :');
@@ -150,7 +160,7 @@ Promise.all([
   });
 
   //
-  socket.on('disconnect', function(){
+  socket.on('disconnect', function() {
     console.log("[osc-receiver] i'm disconnected.");
   });
 
@@ -180,15 +190,15 @@ udp_pd.open();
 udp_pd.on("ready", function() {
   console.log(
     "[udp] ready (udp_pd) : \n" +
-      "\tlistening on --> " + udp_pd.options.localAddress + ":" + udp_pd.options.localPort + "\n" +
-      "\tspeaking to -> " + udp_pd.options.remoteAddress + ":" + udp_pd.options.remotePort + "\n"
+    "\tlistening on --> " + udp_pd.options.localAddress + ":" + udp_pd.options.localPort + "\n" +
+    "\tspeaking to -> " + udp_pd.options.remoteAddress + ":" + udp_pd.options.remotePort + "\n"
   );
 });
 udp_sc.open();
 udp_sc.on("ready", function() {
   console.log(
     "[udp] ready (udp_sc) : \n" +
-      "\tlistening on --> " + udp_sc.options.localAddress + ":" + udp_sc.options.localPort + "\n" +
-      "\tspeaking to -> " + udp_sc.options.remoteAddress + ":" + udp_sc.options.remotePort + "\n"
+    "\tlistening on --> " + udp_sc.options.localAddress + ":" + udp_sc.options.localPort + "\n" +
+    "\tspeaking to -> " + udp_sc.options.remoteAddress + ":" + udp_sc.options.remotePort + "\n"
   );
 });

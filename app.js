@@ -61,25 +61,81 @@ app.use(express.static('public'));
 
 //'scroll' status array
 var scroll = {};
-scroll['a'] = { value: 0, islocked: false };
-scroll['b'] = { value: 0, islocked: false };
-scroll['c'] = { value: 0, islocked: false };
-scroll['d'] = { value: 0, islocked: false };
-scroll['e'] = { value: 0, islocked: false };
-scroll['f'] = { value: 0, islocked: false };
-scroll['g'] = { value: 0, islocked: false };
-scroll['h'] = { value: 0, islocked: false };
+scroll['a'] = {
+  value: 0,
+  islocked: false
+};
+scroll['b'] = {
+  value: 0,
+  islocked: false
+};
+scroll['c'] = {
+  value: 0,
+  islocked: false
+};
+scroll['d'] = {
+  value: 0,
+  islocked: false
+};
+scroll['e'] = {
+  value: 0,
+  islocked: false
+};
+scroll['f'] = {
+  value: 0,
+  islocked: false
+};
+scroll['g'] = {
+  value: 0,
+  islocked: false
+};
+scroll['h'] = {
+  value: 0,
+  islocked: false
+};
 
 //'sound' status array
 var sound_stat = {};
-sound_stat['a'] = { id: 0, isplaying: false, playcount: 0 };
-sound_stat['b'] = { id: 1, isplaying: false, playcount: 0 };
-sound_stat['c'] = { id: 2, isplaying: false, playcount: 0 };
-sound_stat['d'] = { id: 3, isplaying: false, playcount: 0 };
-sound_stat['e'] = { id: 4, isplaying: false, playcount: 0 };
-sound_stat['f'] = { id: 5, isplaying: false, playcount: 0 };
-sound_stat['g'] = { id: 6, isplaying: false, playcount: 0 };
-sound_stat['h'] = { id: 7, isplaying: false, playcount: 0 };
+sound_stat['a'] = {
+  id: 0,
+  isplaying: false,
+  playcount: 0
+};
+sound_stat['b'] = {
+  id: 1,
+  isplaying: false,
+  playcount: 0
+};
+sound_stat['c'] = {
+  id: 2,
+  isplaying: false,
+  playcount: 0
+};
+sound_stat['d'] = {
+  id: 3,
+  isplaying: false,
+  playcount: 0
+};
+sound_stat['e'] = {
+  id: 4,
+  isplaying: false,
+  playcount: 0
+};
+sound_stat['f'] = {
+  id: 5,
+  isplaying: false,
+  playcount: 0
+};
+sound_stat['g'] = {
+  id: 6,
+  isplaying: false,
+  playcount: 0
+};
+sound_stat['h'] = {
+  id: 7,
+  isplaying: false,
+  playcount: 0
+};
 
 //socket.io events
 io.on('connection', function(socket) {
@@ -102,11 +158,36 @@ io.on('connection', function(socket) {
     if (scroll[key].islocked == false) {
       fn(true);
       scroll[key].islocked = true;
-    }
-    else if (scroll[key].islocked == true) {
+    } else if (scroll[key].islocked == true) {
       fn(false);
     }
   });
+
+  socket.on('lock-all', function(msg) {
+    if (msg.action == 'close') {
+      console.log('lock-all');
+      Object.keys(scroll).forEach(function(key) {
+        console.log(scroll[key].islocked);
+        scroll[key].islocked = true;
+        console.log(scroll[key].islocked);
+        socket.broadcast.emit('scroll', {
+          key: key,
+          data: scroll[key]
+        });
+      });
+    } else if (msg.action == 'open') {
+      console.log('release-all');
+      Object.keys(scroll).forEach(function(key) {
+        console.log(scroll[key].islocked);
+        scroll[key].islocked = false;
+        console.log(scroll[key].islocked);
+        socket.broadcast.emit('scroll', {
+          key: key,
+          data: scroll[key]
+        });
+      });
+    }
+  })
 
   //on 'scroll' --> relay the msg. to everyone except sender
   socket.on('scroll', function(msg) {
@@ -134,11 +215,13 @@ io.on('connection', function(socket) {
         sound_stat[sound.name].isplaying = true;
         //emit start
         //relay the message to everybody INCLUDING sender -- but actually only 'receiver.js' is listening 'sound_ctrl' msg.
-        io.emit('sound_ctrl', {id: sound_stat[sound.name].id, action: 1});
+        io.emit('sound_ctrl', {
+          id: sound_stat[sound.name].id,
+          action: 1
+        });
       }
       soundactive = true;
-    }
-    else if (sound.action == 'stop') {
+    } else if (sound.action == 'stop') {
       if (sound_stat[sound.name].playcount > 0) {
         sound_stat[sound.name].playcount--;
       }
@@ -147,7 +230,10 @@ io.on('connection', function(socket) {
         sound_stat[sound.name].isplaying = false;
         //emit stop
         //relay the message to everybody INCLUDING sender -- but actually only 'receiver.js' is listening 'sound_ctrl' msg.
-        io.emit('sound_ctrl', {id: sound_stat[sound.name].id, action: 0});
+        io.emit('sound_ctrl', {
+          id: sound_stat[sound.name].id,
+          action: 0
+        });
       }
       soundactive = false;
     }
@@ -201,7 +287,10 @@ io.on('connection', function(socket) {
         sound_stat[sound.name].isplaying = false;
         //emit stop
         //relay the message to everybody INCLUDING sender -- but actually only 'receiver.js' is listening 'sound_ctrl' msg.
-        io.emit('sound_ctrl', {id: sound_stat[sound.name].id, action: 0});
+        io.emit('sound_ctrl', {
+          id: sound_stat[sound.name].id,
+          action: 0
+        });
       }
     }
 

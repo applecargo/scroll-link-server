@@ -97,8 +97,8 @@ $(document).ready(function() {
     var top = new Layer(); // new Layer() will be automatically activated at the moment.
 
     //networking - socket.io
-    var socket = io('http://192.168.1.105:8080');
-    //var socket = io('https://choir.run');
+    //var socket = io('http://192.168.1.105:8080');
+    var socket = io('https://choir.run');
 
     //net. connection marker
     var netstat = new Path.Circle({
@@ -131,7 +131,7 @@ $(document).ready(function() {
     //
     c_page_prev.addChild(new Path.Rectangle({
       point: [0, 0],
-      size: [vssw*2, vssw*2],
+      size: [vssw * 2, vssw * 2],
     }));
     c_page_prev.addChild(new PointText({
       content: "prev",
@@ -152,7 +152,7 @@ $(document).ready(function() {
     var c_page_next = new Group();
     c_page_next.addChild(new Path.Rectangle({
       point: [0, 0],
-      size: [vssw*2, vssw*2],
+      size: [vssw * 2, vssw * 2],
     }));
     c_page_next.addChild(new PointText({
       content: "next",
@@ -160,7 +160,7 @@ $(document).ready(function() {
       fontWeight: 'bold',
       fontSize: '1em'
     }));
-    c_page_next.translate([vsw - vssw*2, +vssw * 2]);
+    c_page_next.translate([vsw - vssw * 2, +vssw * 2]);
     c_page_next._socket = socket;
     c_page_next.fillColor = 'pink';
     c_page_next.onClick = function() {
@@ -202,9 +202,9 @@ $(document).ready(function() {
     var voice_selected = 0;
     for (var row = 0; row < 5; row++) {
       for (var col = 0; col < 4; col++) {
-        var idx = row*4 + col;
+        var idx = row * 4 + col;
         var c = new Path.Circle({
-          center: [col*vssw*2 + vssw*2, row*vssw*2 + vssw*6],
+          center: [col * vssw * 2 + vssw * 2, row * vssw * 2 + vssw * 6],
           radius: vssw * 0.8,
           fillColor: new Color({
             hue: getRandom(0, 180),
@@ -212,7 +212,7 @@ $(document).ready(function() {
             brightness: 1
           }),
           _idx: idx,
-          onClick: function () {
+          onClick: function() {
             voice_selected = this._idx;
             console.log(voice_selected);
             //next screen.
@@ -234,11 +234,11 @@ $(document).ready(function() {
     new Path.Rectangle([0, 0], vs).fillColor = 'gold';
 
     //white keys
-    var keysize = vssw*1;
+    var keysize = vssw * 1;
     for (var idx = 0; idx < 10; idx++) {
       new Path.Rectangle({
-        point: [vssw*2.5, (keysize + 5) * idx + vssw * 3.5],
-        size: [vssw*5, keysize],
+        point: [vssw * 2.5, (keysize + 5) * idx + vssw * 3.5],
+        size: [vssw * 5, keysize],
         fillColor: 'white',
         _restfill: 'white',
         _activefill: new Color({
@@ -248,38 +248,41 @@ $(document).ready(function() {
         }),
         _socket: socket,
         _idx: 10 - idx,
-        onMouseDown: function () {
+        onMouseDown: function() {
           this.fillColor = this._activefill;
-          var msg = {id: voice_selected, key: this._idx};
+          var msg = {
+            id: voice_selected,
+            key: this._idx
+          };
           console.log(msg);
           this._socket.emit('voice', msg);
         },
-        onMouseUp: function () {
+        onMouseUp: function() {
           this.fillColor = this._restfill;
         }
       });
     }
     //black keys
     var idx = 0
-    var keysize2 = vssw*0.9;
+    var keysize2 = vssw * 0.9;
     for (; idx < 2; idx++) {
       new Path.Rectangle({
-        point: [vssw*2.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2],
-        size: [vssw*3, keysize2],
+        point: [vssw * 2.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2],
+        size: [vssw * 3, keysize2],
         fillColor: '#444'
       });
     }
     for (; idx < 5; idx++) {
       new Path.Rectangle({
-        point: [vssw*2.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2 + keysize],
-        size: [vssw*3, keysize2],
+        point: [vssw * 2.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2 + keysize],
+        size: [vssw * 3, keysize2],
         fillColor: '#444'
       });
     }
     for (; idx < 7; idx++) {
       new Path.Rectangle({
-        point: [vssw*2.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2 + keysize * 2],
-        size: [vssw*3, keysize2],
+        point: [vssw * 2.0 + vssw * -0.1, (keysize + 7) * idx + vssw * 3.5 + keysize / 2 + keysize * 2],
+        size: [vssw * 3, keysize2],
         fillColor: '#444'
       });
     }
@@ -302,10 +305,10 @@ $(document).ready(function() {
 
     for (var row = 0; row < 3; row++) {
       for (var col = 0; col < 3; col++) {
-        var idx = row*3 + col;
+        var idx = row * 3 + col;
         if (idx == 8) break;
         var c = new Path.Circle({
-          center: [col*vssw*3 + vssw*2, row*vssw*3 + vssw*6],
+          center: [col * vssw * 3 + vssw * 2, row * vssw * 3 + vssw * 6],
           radius: vssw * 1.2,
           fillColor: new Color({
             hue: getRandom(0, 180),
@@ -314,14 +317,14 @@ $(document).ready(function() {
           }),
           _idx: idx,
           _socket: socket,
-          onMouseDown: function () {
+          onMouseDown: function() {
             console.log(Object.keys(buttons)[this._idx] + " pressed");
             this._socket.emit('sound', {
               name: Object.keys(buttons)[this._idx],
               action: 'start'
             });
           },
-          onMouseUp: function () {
+          onMouseUp: function() {
             console.log(Object.keys(buttons)[this._idx] + " released");
             this._socket.emit('sound', {
               name: Object.keys(buttons)[this._idx],

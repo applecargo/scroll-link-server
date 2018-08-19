@@ -43,8 +43,8 @@ $(document).ready(function() {
   }
   patterns['b'] = pattern2;
 
-  var socket = io('http://192.168.1.105:8080');
-  //var socket = io('https://choir.run');
+  //var socket = io('http://192.168.1.105:8080');
+  var socket = io('https://choir.run');
   socket.on('connect', function() {
     console.log("i' m connected!");
   });
@@ -119,23 +119,22 @@ $(document).ready(function() {
     if (scroll[scrollkey] != undefined) {
       //try 'get'
       console.log('getting scroll...');
-      socket.emit('scroll-get', scrollkey, function (response) {
+      socket.emit('scroll-get', scrollkey, function(response) {
         console.log(response);
         if (response == true) {
           scrollactive = true;
           scrollold = scroll[scrollkey].value;
           //
           if (scrollkey == 'a') {
-            patterns[scrollkey].forEach(function (item) {
+            patterns[scrollkey].forEach(function(item) {
               item.strokeColor = new Color({
                 hue: getRandom(0, 360),
                 saturation: 1,
                 brightness: 1
               });
             });
-          }
-          else {
-            patterns[scrollkey].forEach(function (item) {
+          } else {
+            patterns[scrollkey].forEach(function(item) {
               item.fillColor = new Color({
                 hue: getRandom(0, 360),
                 saturation: 1,
@@ -189,11 +188,10 @@ $(document).ready(function() {
       }
       //release my holding
       scrollactive = false;
-      patterns[scrollkey].forEach(function (item) {
+      patterns[scrollkey].forEach(function(item) {
         if (scrollkey == 'a') {
           item.strokeColor = new Color('black');
-        }
-        else {
+        } else {
           item.fillColor = new Color('black');
         }
       });

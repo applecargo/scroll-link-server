@@ -98,8 +98,8 @@ $(document).ready(function() {
     var top = new Layer(); // new Layer() will be automatically activated at the moment.
 
     //networking - socket.io
-    var socket = io('http://192.168.1.105:8080');
-    //var socket = io('https://choir.run');
+    //var socket = io('http://192.168.219.186:8080');
+    var socket = io('https://choir.run');
 
     //net. connection marker
     var netstat = new Path.Circle({
@@ -132,7 +132,7 @@ $(document).ready(function() {
     //
     c_page_prev.addChild(new Path.Rectangle({
       point: [0, 0],
-      size: [vssw*2, vssw*2],
+      size: [vssw * 2, vssw * 2],
     }));
     c_page_prev.addChild(new PointText({
       content: "prev",
@@ -153,7 +153,7 @@ $(document).ready(function() {
     var c_page_next = new Group();
     c_page_next.addChild(new Path.Rectangle({
       point: [0, 0],
-      size: [vssw*2, vssw*2],
+      size: [vssw * 2, vssw * 2],
     }));
     c_page_next.addChild(new PointText({
       content: "next",
@@ -161,7 +161,7 @@ $(document).ready(function() {
       fontWeight: 'bold',
       fontSize: '1em'
     }));
-    c_page_next.translate([vsw - vssw*2, +vssw * 2]);
+    c_page_next.translate([vsw - vssw * 2, +vssw * 2]);
     c_page_next._socket = socket;
     c_page_next.fillColor = 'white';
     c_page_next.onClick = function() {
@@ -206,7 +206,7 @@ $(document).ready(function() {
     var c_clap = new Group();
     c_clap.addChild(new Path.Rectangle({
       point: view.center,
-      size: [vssw*3, vssw*3],
+      size: [vssw * 3, vssw * 3],
     }));
     c_clap.addChild(new PointText({
       content: "clap!",
@@ -214,7 +214,7 @@ $(document).ready(function() {
       fontWeight: 'bold',
       fontSize: '3em'
     }));
-    c_clap.translate([-vssw*2, -vssw*2]);
+    c_clap.translate([-vssw * 2, -vssw * 2]);
     c_clap._socket = socket;
     c_clap._clapping = false;
     c_clap._clapper = undefined;
@@ -241,6 +241,47 @@ $(document).ready(function() {
         }
         this.fillColor = 'skyblue';
       }
+    };
+
+    //for conductor
+    var c_lock = new Group();
+    c_lock.addChild(new Path.Rectangle({
+      point: view.center,
+      size: [vssw * 3, vssw * 3],
+    }));
+    c_lock.addChild(new PointText({
+      content: "lock!",
+      point: c_lock.bounds.topRight,
+      fontWeight: 'bold',
+      fontSize: '3em'
+    }));
+    c_lock.translate([-vssw * 2, +vssw * 2]);
+    c_lock._socket = socket;
+    c_lock.fillColor = 'red';
+    c_lock.onClick = function() {
+      this._socket.emit('lock-all', {
+        action: 'close'
+      });
+    };
+
+    var c_release = new Group();
+    c_release.addChild(new Path.Rectangle({
+      point: view.center,
+      size: [vssw * 3, vssw * 3],
+    }));
+    c_release.addChild(new PointText({
+      content: "release!",
+      point: c_release.bounds.topRight,
+      fontWeight: 'bold',
+      fontSize: '3em'
+    }));
+    c_release.translate([-vssw * 2, +vssw * 4]);
+    c_release._socket = socket;
+    c_release.fillColor = 'green';
+    c_release.onClick = function() {
+      this._socket.emit('lock-all', {
+        action: 'open'
+      });
     };
 
     // //

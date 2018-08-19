@@ -21,8 +21,8 @@ $(document).ready(function() {
     r.rotate(-0.5 * idx);
   }
 
-  var socket = io('http://192.168.1.105:8080');
-  //var socket = io('https://choir.run');
+  //var socket = io('http://192.168.1.105:8080');
+  var socket = io('https://choir.run');
   socket.on('connect', function() {
     console.log("i' m connected!");
   });

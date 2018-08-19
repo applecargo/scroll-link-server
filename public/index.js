@@ -98,8 +98,8 @@ $(document).ready(function() {
     var top = new Layer(); // new Layer() will be automatically activated at the moment.
 
     //networking - socket.io
-    var socket = io('http://192.168.1.105:8080');
-    //var socket = io('https://choir.run');
+    //var socket = io('http://192.168.219.186:8080');
+    var socket = io('https://choir.run');
 
     //net. connection marker
     var netstat = new Path.Circle({
@@ -132,7 +132,7 @@ $(document).ready(function() {
     //
     c_page_prev.addChild(new Path.Rectangle({
       point: [0, 0],
-      size: [vssw*2, vssw*2],
+      size: [vssw * 2, vssw * 2],
     }));
     c_page_prev.addChild(new PointText({
       content: "prev",
@@ -153,7 +153,7 @@ $(document).ready(function() {
     var c_page_next = new Group();
     c_page_next.addChild(new Path.Rectangle({
       point: [0, 0],
-      size: [vssw*2, vssw*2],
+      size: [vssw * 2, vssw * 2],
     }));
     c_page_next.addChild(new PointText({
       content: "next",
@@ -161,7 +161,7 @@ $(document).ready(function() {
       fontWeight: 'bold',
       fontSize: '1em'
     }));
-    c_page_next.translate([vsw - vssw*2, +vssw * 2]);
+    c_page_next.translate([vsw - vssw * 2, +vssw * 2]);
     c_page_next._socket = socket;
     c_page_next.fillColor = 'white';
     c_page_next.onClick = function() {
@@ -247,21 +247,21 @@ $(document).ready(function() {
     //TODO: info text.
     new PointText({
       content: "네트워크 테스트!",
-      point: view.center + [-vssw*3, -vssw*2],
+      point: view.center + [-vssw * 3, -vssw * 2],
       fontWeight: 'bold',
       fontSize: '2em',
       fillColor: 'gold'
     });
     new PointText({
       content: "사운드 테스트!",
-      point: view.center + [-vssw*3, vssw*0],
+      point: view.center + [-vssw * 3, vssw * 0],
       fontWeight: 'bold',
       fontSize: '2em',
       fillColor: 'pink'
     });
     new PointText({
       content: "동그라미 터치!",
-      point: view.center + [-vssw*3, vssw*2],
+      point: view.center + [-vssw * 3, vssw * 2],
       fontWeight: 'bold',
       fontSize: '2em',
       fillColor: 'red'
