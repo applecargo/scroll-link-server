@@ -326,6 +326,7 @@ $(document).ready(function() {
   hm.on('panend', function(ev) {
     if (scrollactive == true) {
       scroll[scrollkey].value = scrollold - ev.deltaY;
+      scroll[scrollkey].islocked = false;
       if (scroll[scrollkey].value < 0) scroll[scrollkey].value = 0;
       if (scroll[scrollkey].value > SCENE_H) scroll[scrollkey].value = SCENE_H;
       throttled_send(scrollkey, scroll[scrollkey].value, false);
