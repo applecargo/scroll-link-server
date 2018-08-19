@@ -252,29 +252,17 @@ $(document).ready(function() {
     if (scroll[scrollkey] != undefined) {
       //try 'get'
       console.log('getting scroll...');
-      socket.emit('scroll-get', scrollkey, function(response) {
-        console.log(response);
-        if (response == true) {
+      Promise.all([
+        new Promise(function(resolve, reject) {
+          socket.emit('scroll-get', scrollkey, function(response) {
+            console.log(response);
+            resolve(response);
+          });
+        })
+      ]).then(function(response) {
+        if (response[0] == true) {
           scrollactive = true;
           scrollold = scroll[scrollkey].value;
-          // //
-          // if (scrollkey == 'a') {
-          //   patterns[scrollkey].forEach(function(item) {
-          //     item.strokeColor = new Color({
-          //       hue: getRandom(0, 360),
-          //       saturation: 1,
-          //       brightness: 1
-          //     });
-          //   });
-          // } else {
-          //   patterns[scrollkey].forEach(function(item) {
-          //     item.fillColor = new Color({
-          //       hue: getRandom(0, 360),
-          //       saturation: 1,
-          //       brightness: 1
-          //     });
-          //   });
-          // }
         }
       });
     }
