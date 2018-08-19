@@ -4,8 +4,11 @@ $(document).ready(function() {
 
   paper.install(window);
 
+  var patterns = {};
+
   paper.setup(document.getElementById('paperjs1'));
   var project1 = project;
+  var pattern1 = [];
   var SCENE_W = view.size.width;
   var SCENE_H = 5000;
   var step = 30;
@@ -19,10 +22,13 @@ $(document).ready(function() {
       strokeColor: 'black',
     });
     r.rotate(-0.5 * idx);
+    pattern1.push(r);
   }
+  patterns['a'] = pattern1;
 
   paper.setup(document.getElementById('paperjs2'));
   var project2 = project;
+  var pattern2 = [];
   SCENE_W = view.size.width;
   SCENE_H = 5000;
   step = 100;
@@ -33,10 +39,13 @@ $(document).ready(function() {
       size: [idx * 2.2 + 2, idx * 2 + 2],
       fillColor: 'black',
     });
+    pattern2.push(r);
   }
+  patterns['b'] = pattern2;
 
   paper.setup(document.getElementById('paperjs3'));
   var project3 = project;
+  var pattern3 = [];
   SCENE_W = view.size.width;
   SCENE_H = 5000;
   step = 100;
@@ -47,10 +56,13 @@ $(document).ready(function() {
       size: [idx * 2.2 + 2, idx * 2 + 2],
       fillColor: 'black',
     });
+    pattern3.push(r);
   }
+  patterns['c'] = pattern3;
 
   paper.setup(document.getElementById('paperjs4'));
   var project4 = project;
+  var pattern4 = [];
   SCENE_W = view.size.width;
   SCENE_H = 5000;
   step = 100;
@@ -61,10 +73,13 @@ $(document).ready(function() {
       size: [idx * 2.2 + 2, idx * 2 + 2],
       fillColor: 'black',
     });
+    pattern4.push(r);
   }
+  patterns['d'] = pattern4;
 
   paper.setup(document.getElementById('paperjs5'));
   var project5 = project;
+  var pattern5 = [];
   SCENE_W = view.size.width;
   SCENE_H = 5000;
   step = 100;
@@ -75,10 +90,13 @@ $(document).ready(function() {
       size: [idx * 2.2 + 2, idx * 2 + 2],
       fillColor: 'black',
     });
+    pattern5.push(r);
   }
+  patterns['e'] = pattern5;
 
   paper.setup(document.getElementById('paperjs6'));
   var project6 = project;
+  var pattern6 = [];
   SCENE_W = view.size.width;
   SCENE_H = 5000;
   step = 100;
@@ -89,9 +107,11 @@ $(document).ready(function() {
       size: [idx * 2.2 + 2, idx * 2 + 2],
       fillColor: 'black',
     });
+    pattern6.push(r);
   }
+  patterns['f'] = pattern6;
 
-  var socket = io('http://192.168.1.105:8080');
+  var socket = io('http://192.168.219.156:8080');
   //var socket = io('https://choir.run');
   socket.on('connect', function() {
     console.log("i' m connected!");
@@ -110,6 +130,13 @@ $(document).ready(function() {
           project1.view.center.x,
           scroll[msg.key].value
         ];
+        if (msg.data.islocked == true) { //locking - active
+          $('.paperjs').eq(0).removeClass('bg-white');
+          $('.paperjs').eq(0).addClass('bg-red');
+        } else { //unlocking - inactive
+          $('.paperjs').eq(0).removeClass('bg-red');
+          $('.paperjs').eq(0).addClass('bg-white');
+        }
         break;
       case 'b':
         project2.activate();
@@ -117,6 +144,13 @@ $(document).ready(function() {
           project2.view.center.x,
           scroll[msg.key].value
         ];
+        if (msg.data.islocked == true) { //locking - active
+          $('.paperjs').eq(1).removeClass('bg-white');
+          $('.paperjs').eq(1).addClass('bg-orange');
+        } else { //unlocking - inactive
+          $('.paperjs').eq(1).removeClass('bg-orange');
+          $('.paperjs').eq(1).addClass('bg-white');
+        }
         break;
       case 'c':
         project3.activate();
@@ -124,6 +158,13 @@ $(document).ready(function() {
           project3.view.center.x,
           scroll[msg.key].value
         ];
+        if (msg.data.islocked == true) { //locking - active
+          $('.paperjs').eq(2).removeClass('bg-white');
+          $('.paperjs').eq(2).addClass('bg-gold');
+        } else { //unlocking - inactive
+          $('.paperjs').eq(2).removeClass('bg-gold');
+          $('.paperjs').eq(2).addClass('bg-white');
+        }
         break;
       case 'd':
         project4.activate();
@@ -131,6 +172,13 @@ $(document).ready(function() {
           project4.view.center.x,
           scroll[msg.key].value
         ];
+        if (msg.data.islocked == true) { //locking - active
+          $('.paperjs').eq(3).removeClass('bg-white');
+          $('.paperjs').eq(3).addClass('bg-lime');
+        } else { //unlocking - inactive
+          $('.paperjs').eq(3).removeClass('bg-lime');
+          $('.paperjs').eq(3).addClass('bg-white');
+        }
         break;
       case 'e':
         project5.activate();
@@ -138,6 +186,13 @@ $(document).ready(function() {
           project5.view.center.x,
           scroll[msg.key].value
         ];
+        if (msg.data.islocked == true) { //locking - active
+          $('.paperjs').eq(4).removeClass('bg-white');
+          $('.paperjs').eq(4).addClass('bg-light-blue');
+        } else { //unlocking - inactive
+          $('.paperjs').eq(4).removeClass('bg-light-blue');
+          $('.paperjs').eq(4).addClass('bg-white');
+        }
         break;
       case 'f':
         project6.activate();
@@ -145,6 +200,13 @@ $(document).ready(function() {
           project6.view.center.x,
           scroll[msg.key].value
         ];
+        if (msg.data.islocked == true) { //locking - active
+          $('.paperjs').eq(5).removeClass('bg-white');
+          $('.paperjs').eq(5).addClass('bg-blue');
+        } else { //unlocking - inactive
+          $('.paperjs').eq(5).removeClass('bg-blue');
+          $('.paperjs').eq(5).addClass('bg-white');
+        }
         break;
       default:
         ;
@@ -187,10 +249,34 @@ $(document).ready(function() {
       scrollkey = 'f';
     }
     if (scroll[scrollkey] != undefined) {
-      throttled_send(scrollkey, scroll[scrollkey].value, true);
-      //DEBUG: now simply get it.
-      scrollactive = true;
-      scrollold = scroll[scrollkey].value;
+      //try 'get'
+      console.log('getting scroll...');
+      socket.emit('scroll-get', scrollkey, function (response) {
+        console.log(response);
+        if (response == true) {
+          scrollactive = true;
+          scrollold = scroll[scrollkey].value;
+          //
+          if (scrollkey == 'a') {
+            patterns[scrollkey].forEach(function (item) {
+              item.strokeColor = new Color({
+                hue: getRandom(0, 360),
+                saturation: 1,
+                brightness: 1
+              });
+            });
+          }
+          else {
+            patterns[scrollkey].forEach(function (item) {
+              item.fillColor = new Color({
+                hue: getRandom(0, 360),
+                saturation: 1,
+                brightness: 1
+              });
+            });
+          }
+        }
+      });
     }
   });
   hm.on('panmove', function(ev) {
@@ -283,6 +369,14 @@ $(document).ready(function() {
       }
       //release my holding
       scrollactive = false;
+      patterns[scrollkey].forEach(function (item) {
+        if (scrollkey == 'a') {
+          item.strokeColor = new Color('black');
+        }
+        else {
+          item.fillColor = new Color('black');
+        }
+      });
     }
   });
 

@@ -131,7 +131,7 @@ $(document).ready(function() {
                 hue: getRandom(0, 360),
                 saturation: 1,
                 brightness: 1
-              })
+              });
             });
           }
           else {
@@ -140,7 +140,7 @@ $(document).ready(function() {
                 hue: getRandom(0, 360),
                 saturation: 1,
                 brightness: 1
-              })
+              });
             });
           }
         }
